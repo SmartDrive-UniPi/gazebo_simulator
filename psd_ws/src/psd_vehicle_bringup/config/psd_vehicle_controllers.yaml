@@ -1,0 +1,31 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    effort_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    position_controller:
+      type: forward_command_controller/ForwardCommandController
+
+
+
+# actual controllers
+effort_controller:
+  ros__parameters:
+    joints:
+      - drive_fr
+      - drive_fl
+      - drive_rr
+      - drive_rl
+
+position_controller:
+  ros__parameters:
+    joints:
+      - steering_fl
+      - steering_fr
+    interface_name: position
+

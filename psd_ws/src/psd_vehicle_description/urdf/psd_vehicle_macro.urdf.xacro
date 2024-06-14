@@ -1,0 +1,274 @@
+<?xml version="1.0" ?>
+<robot name="psd_vehicle" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- include materials -->
+  <xacro:include filename="$(find psd_vehicle_description)/urdf/materials.xacro" />
+  
+  <!-- start vehicle description -->
+  <xacro:macro name="psd_vehicle" params="parent *origin">
+    <xacro:property name="PI" value="3.14159265359" />
+    <xacro:property name="rot90" value="${90 * PI / 180}" />
+    <xacro:property name="rot180" value="${180 * PI / 180}" />
+    <xacro:property name="max_steering_angle" value="${20 * PI / 180}" />
+    <xacro:property name="wheel_radius" value="0.19" />
+
+    <!-- LINKS -->
+
+    <!-- Chassis START-->  
+    <link name="chassis">
+      <inertial>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <mass value="7.077984465449566"/>
+        <inertia ixx="0.233109" iyy="0.053798" izz="0.264742" ixy="-0.0" iyz="-0.0" ixz="-0.0"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="$(find psd_vehicle_description)/meshes/stl/chassis.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="anodized_red"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="$(find psd_vehicle_description)/meshes/stl/chassis.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="world_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="chassis" />
+    </joint>
+
+    <xacro:macro name="suspension" params="name">
+      <link name="${name}">
+        <inertial>
+          <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+          <mass value="0.09196821373647668"/>
+          <inertia ixx="6.5e-05" iyy="0.000142" izz="0.000206" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/suspension.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+          <material name="anodized_blue"/>
+        </visual>
+        <collision>
+          <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/suspension.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+        </collision>
+      </link>
+    </xacro:macro>
+
+    <xacro:suspension name="link_FL"/>
+    <xacro:suspension name="link_FR"/>
+    <xacro:suspension name="link_RL"/>
+    <xacro:suspension name="link_RR"/>
+
+    <xacro:macro name="steering_hinge" params="name">
+      <link name="${name}">
+        <inertial>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <mass value="0.00011097676048806171"/>
+          <inertia ixx="0.0" iyy="0.0" izz="0.0" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/steering_hinge.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+          <material name="silver"/>
+        </visual>
+        <collision>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/steering_hinge.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+        </collision>
+      </link>
+    </xacro:macro>
+
+    <xacro:steering_hinge name="steering_hinge_FL"/>
+    <xacro:steering_hinge name="steering_hinge_FR"/>
+
+    <xacro:macro name="wheel" params="name">
+      <link name="${name}">
+        <inertial>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <mass value="0.1944554118066591"/>
+          <inertia ixx="0.001191" iyy="0.000933" izz="0.000861" ixy="-0.000154" iyz="0.0" ixz="0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/wheel.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+          <material name="anodized_red"/>
+        </visual>
+        <collision>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/wheel.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+        </collision>
+      </link>
+    </xacro:macro>
+
+    <xacro:wheel name="wheel_rim_FL"/>
+    <xacro:wheel name="wheel_rim_FR"/>
+    <xacro:wheel name="wheel_rim_RL"/>
+    <xacro:wheel name="wheel_rim_RR"/>
+
+    <xacro:macro name="tyre" params="name">
+      <link name="${name}">
+        <inertial>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <mass value="0.1944554118066591"/>
+          <inertia ixx="0.001191" iyy="0.000933" izz="0.000861" ixy="-0.000154" iyz="0.0" ixz="0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/tyre.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+          <material name="rubber_tyre"/>
+        </visual>
+        <collision>
+          <origin xyz="0.0 0.0 0.0" rpy="0 ${rot90} 0"/>
+          <geometry>
+            <mesh filename="$(find psd_vehicle_description)/meshes/stl/tyre.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+        </collision>
+      </link>
+    </xacro:macro>
+
+    <xacro:wheel name="tyre_FL"/>
+    <xacro:wheel name="tyre_FR"/>
+    <xacro:wheel name="tyre_RL"/>
+    <xacro:wheel name="tyre_RR"/>
+
+    <!-- JOINTS -->
+    <!-- SUSPENSIONS -->
+    <joint name="suspension_fl" type="fixed">
+      <origin xyz="-0.0401 0.3001 0.0" rpy="0 0 ${rot180}"/>
+      <parent link="chassis"/>
+      <child link="link_FL"/>
+    </joint>
+
+    <joint name="suspension_fr" type="fixed">
+      <origin xyz="0.0401 0.3001 0.0" rpy="0 0 0"/>
+      <parent link="chassis"/>
+      <child link="link_FR"/>
+    </joint>
+
+    <joint name="suspension_rl" type="fixed">
+      <origin xyz="-0.0401 -0.3001 0.0" rpy="0 0 ${rot180}"/>
+      <parent link="chassis"/>
+      <child link="link_RL"/>
+    </joint>
+
+    <joint name="suspension_rr" type="fixed">
+      <origin xyz="0.0401 -0.3001 0.0" rpy="0 0 0"/>
+      <parent link="chassis"/>
+      <child link="link_RR"/>
+    </joint>
+
+    <!-- STEERING -->
+    <joint name="steering_fl" type="revolute">
+      <origin xyz="0.1351 0.0 0.0" rpy="0 0 0"/>
+      <parent link="link_FL"/>
+      <child link="steering_hinge_FL"/>
+      <axis xyz="0.0 -0.0 1.0"/>
+      <limit upper="0.523599" lower="-0.523599" effort="100" velocity="100"/>
+    </joint>
+
+    <joint name="steering_fr" type="revolute">
+      <origin xyz="0.1351 0.0 0.0" rpy="0 0 0"/>
+      <parent link="link_FR"/>
+      <child link="steering_hinge_FR"/>
+      <axis xyz="0.0 -0.0 1.0"/>
+      <limit upper="0.523599" lower="-0.523599" effort="100" velocity="100"/>
+    </joint>
+
+    <!-- WHEEL DRIVE -->
+    <joint name="drive_fl" type="continuous">
+      <origin xyz="0.0 0.0 0.0051" rpy="0 0 0"/>
+      <parent link="steering_hinge_FL"/>
+      <child link="wheel_rim_FL"/>
+      <axis xyz="1.0 0.0 0.0"/>
+    </joint>
+
+    <joint name="drive_fr" type="continuous">
+      <origin xyz="0.0 0.0 0.0051" rpy="0 0 0"/>
+      <parent link="steering_hinge_FR"/>
+      <child link="wheel_rim_FR"/>
+      <axis xyz="-1.0 0.0 -0.0"/>
+    </joint>
+
+    <joint name="drive_rl" type="continuous">
+      <origin xyz="0.1351 0.0 0.0" rpy="0 0 0"/>
+      <parent link="link_RL"/>
+      <child link="wheel_rim_RL"/>
+      <axis xyz="1.0 -0.0 0.0"/>
+    </joint>
+
+    <joint name="drive_rr" type="continuous">
+      <origin xyz="0.1351 0.0 0.0" rpy="0 0 0"/>
+      <parent link="link_RR"/>
+      <child link="wheel_rim_RR"/>
+      <axis xyz="-1.0 0.0 -0.0"/>
+    </joint>
+
+    <!-- WHEELS -->
+    <joint name="complete_tyre_fl" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <parent link="wheel_rim_FL"/>
+      <child link="tyre_FL"/>
+    </joint>
+    
+    <joint name="complete_tyre_fr" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <parent link="wheel_rim_FR"/>
+      <child link="tyre_FR"/>
+    </joint>
+
+    <joint name="complete_tyre_rl" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <parent link="wheel_rim_RL"/>
+      <child link="tyre_RL"/>
+    </joint>
+
+    <joint name="complete_tyre_rr" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <parent link="wheel_rim_RR"/>
+      <child link="tyre_RR"/>
+    </joint>
+
+
+    <!-- SENSORS -->
+    <!-- lidar -->
+    <xacro:include filename="$(find ros_components_description)/urdf/slamtec_rplidar_s1.urdf.xacro" ns="lidar" />
+
+    <!-- evaluate the macro and place the sensor on robot -->
+    <xacro:lidar.slamtec_rplidar_s1
+      parent_link="chassis"
+      xyz="0.0 0.0 0.1"
+      rpy="0.0 0.0 0.0" />
+
+    <!-- stereocamera -->
+    <xacro:include filename="$(find ros_components_description)/urdf/intel_realsense_d435.urdf.xacro" ns="camera" />
+    
+    <!-- evaluate the macro and place the sensor on robot -->
+    <xacro:camera.intel_realsense_d435
+      parent_link="chassis"
+      xyz="0.0 0.0 0.2"
+      rpy="0.0 0.0 ${rot90}" />
+
+
+  </xacro:macro>
+</robot>
