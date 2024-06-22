@@ -23,7 +23,13 @@ add_executable(custom_teleop_gamepad src/custom_teleop_gamepad.cpp)
 ament_target_dependencies(custom_teleop_gamepad rclcpp std_msgs SDL2)
 target_link_libraries(custom_teleop_gamepad SDL2::SDL2) 
 
-install(TARGETS custom_teleop_keyboard custom_teleop_gamepad DESTINATION lib/${PROJECT_NAME})
+add_executable(custom_teleop_logitech src/custom_teleop_logitech.cpp)
+ament_target_dependencies(custom_teleop_logitech rclcpp std_msgs SDL2)
+target_link_libraries(custom_teleop_logitech SDL2::SDL2) 
+
+
+
+install(TARGETS custom_teleop_logitech custom_teleop_keyboard custom_teleop_gamepad DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

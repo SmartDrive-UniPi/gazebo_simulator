@@ -170,6 +170,7 @@ def generate_launch_description():
     # world_file = "empty.sdf"
 
     # Bridge
+    # https://github.com/gazebosim/ros_gz/blob/ros2/ros_gz_bridge/README.md
     gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -199,16 +200,33 @@ def generate_launch_description():
             "/camera/depth/points"
             + "@sensor_msgs/msg/PointCloud2"
             + "[gz.msgs.PointCloudPacked",
+
+            "/world/track/model/psd_vehicle/link/home/sensor/imu_sample/imu"
+            + "@sensor_msgs/msg/Imu"
+            + "[gz.msgs.IMU",
+
+
         ],
 
         remappings=[
             ("/velodyne_points/points", "/velodyne_points"),
             ("/camera/camera_info", "/camera/depth/camera_info"),
             ("/camera/depth", "/camera/depth/image_raw"),
+            ("/world/track/model/psd_vehicle/link/home/sensor/imu_sample/imu", "/imu")
         ],
 
         output='screen'
     )
+
+    bringup_pkg = get_package_share_directory("psd_vehicle_bringup")
+
+    robot_localization_node = Node(
+       package='robot_localization',
+       executable='ekf_node',
+       name='ekf_filter_node',
+       output='screen',
+       parameters=[os.path.join(bringup_pkg, 'config/ekf.yaml'), {'use_sim_time': True}]
+    )   
 
     return LaunchDescription([
         declare_device_namespace,
@@ -240,6 +258,7 @@ def generate_launch_description():
 
         node_robot_state_publisher,
         gz_spawn_entity,
+        #robot_localization_node,
 
         # Launch Arguments
         DeclareLaunchArgument(
