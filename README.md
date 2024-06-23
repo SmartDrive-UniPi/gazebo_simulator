@@ -27,5 +27,3 @@ After that you can access the container with `docker exec -it psd_container /bin
 
 ## First run of the container:
 To be sure that everything is setup well, check the README in the ***deps/*** folder
-
-## [WIP]
